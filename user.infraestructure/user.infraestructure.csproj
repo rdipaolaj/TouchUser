@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\user.common\user.common.csproj" />
+    <ProjectReference Include="..\user.internalservices\user.internalservices.csproj" />
+    <ProjectReference Include="..\user.redis\user.redis.csproj" />
+    <ProjectReference Include="..\user.secretsmanager\user.secretsmanager.csproj" />
+  </ItemGroup>
+
+</Project>
