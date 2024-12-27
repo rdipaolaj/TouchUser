@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\user.application\user.application.csproj" />
     <ProjectReference Include="..\user.common\user.common.csproj" />
     <ProjectReference Include="..\user.data\user.data.csproj" />
     <ProjectReference Include="..\user.dto\user.dto.csproj" />

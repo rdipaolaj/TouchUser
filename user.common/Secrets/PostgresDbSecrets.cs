@@ -14,7 +14,7 @@ public class PostgresDbSecrets : ISecret
     public string Host { get; set; } = string.Empty;
 
     [JsonPropertyName("port")]
-    public int Port { get; set; }
+    public string Port { get; set; } = string.Empty;
 
     [JsonPropertyName("dbname")]
     public string Dbname { get; set; } = string.Empty;

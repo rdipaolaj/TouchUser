@@ -13,6 +13,7 @@ using user.dto.Mapster;
 using user.secretsmanager.Service;
 using Microsoft.AspNetCore.Mvc;
 using user.request.Mapster;
+using user.application.Mapster;
 
 namespace user.api;
 
@@ -82,9 +83,11 @@ public static class ProgramExtesions
     {
         TypeAdapterConfig mapsterConfiguration = MapsterConfiguration.Configuration();
         TypeAdapterConfig mapsterRequestConfiguration = MapsterRequestConfiguration.Configuration();
+        TypeAdapterConfig mapsterApplicationConfiguration = MapsterApplicationConfiguration.Configuration();
 
         services.AddSingleton(mapsterConfiguration);
         services.AddSingleton(mapsterRequestConfiguration);
+        services.AddSingleton(mapsterApplicationConfiguration);
         services.AddScoped<IMapper, ServiceMapper>();
 
         return services;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using user.redis.Services;
+using user.redis.Users;
 
 namespace user.redis;
 
@@ -16,6 +17,7 @@ public static class RedisServiceConfiguration
     public static IServiceCollection AddRedisServiceConfiguration(this IServiceCollection services)
     {
         services.AddSingleton<IRedisService, RedisService>();
+        services.AddSingleton<IRedisUserService, RedisUserService>();
 
         return services;
     }
