@@ -24,4 +24,12 @@ internal class UserService : IUserService
         var response = await _userRepository.CreateUserAsync(user, cancellationToken);
         return response;
     }
+
+    /// <summary>
+    /// Obtiene un usuario en base al username.
+    /// </summary>
+    public async Task<entities.User?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken)
+    {
+        return await _userRepository.GetUserByUsernameAsync(username, cancellationToken);
+    }
 }

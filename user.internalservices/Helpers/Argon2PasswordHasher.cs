@@ -18,6 +18,23 @@ public class Argon2PasswordHasher : IPasswordHasher
         return (Convert.ToBase64String(argon2.GetBytes(16)), Convert.ToBase64String(salt));
     }
 
+    public bool VerifyPassword(string plainPassword, string storedHash, string storedSalt)
+    {
+        var saltBytes = Convert.FromBase64String(storedSalt);
+
+        var argon2 = new Argon2id(Encoding.UTF8.GetBytes(plainPassword))
+        {
+            Salt = saltBytes,
+            DegreeOfParallelism = 8,
+            MemorySize = 8192,
+            Iterations = 4
+        };
+
+        var reHashedPassword = Convert.ToBase64String(argon2.GetBytes(16));
+
+        return reHashedPassword.Equals(storedHash);
+    }
+
     private byte[] GenerateSalt()
     {
         var salt = new byte[16];

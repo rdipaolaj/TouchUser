@@ -25,6 +25,6 @@ public enum ApiErrorCode
 
 public enum UserRole
 {
-    Administrator = 0,
-    Employee = 1
+    Administrator = 1,
+    Employee = 2
 }

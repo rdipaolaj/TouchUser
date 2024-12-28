@@ -29,6 +29,20 @@ public class RoleRepository : IRoleRepository
             _logger.LogError($"Error en GetRoleIdByGuidAsync: {ex.Message}");
             return null;
         }
-        
+    }
+
+    public async Task<List<Role?>?> GetListRoleAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogInformation("GetListRoleAsync iniciado");
+            List<Role?>? roles = await _context.Roles.ToListAsync(cancellationToken);
+            return roles;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error en GetListRoleAsync: {ex.Message}");
+            return null;
+        }
     }
 }

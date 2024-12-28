@@ -7,6 +7,7 @@ using user.secretsmanager;
 using user.handler.User.v1;
 using FluentValidation;
 using user.requestvalidator.User;
+using user.handler.Rol.v1;
 
 namespace user.infraestructure.Modules;
 public static class MediatorModule
@@ -16,10 +17,14 @@ public static class MediatorModule
         services.AddMediatR(configuration =>
         {
             configuration.RegisterServicesFromAssemblyContaining(typeof(CreateUserCommandHandler));
+            configuration.RegisterServicesFromAssemblyContaining(typeof(GetListRolesQueryHandler));
+            configuration.RegisterServicesFromAssemblyContaining(typeof(GetUserCommandHandler));
+
             configuration.AddOpenBehavior(typeof(ValidatorBehavior<,>));
         });
 
         services.AddValidatorsFromAssembly(typeof(CreateUserCommandValidator).Assembly);
+        services.AddValidatorsFromAssembly(typeof(GetUserCommandValidator).Assembly);
 
         return services;
     }

@@ -29,4 +29,14 @@ public class UserController : CustomController
         var result = await _mediator.Send(command);
         return OkorBadRequestValidationApiResponse(result);
     }
+
+    [HttpPost]
+    [Route("get-user")]
+    [MapToApiVersion(1)]
+    public async Task<IActionResult> GetUserByUsernameAndPassword([FromBody] GetUserCommand command)
+    {
+        _logger.LogInformation("Getting user...");
+        var result = await _mediator.Send(command);
+        return OkorBadRequestValidationApiResponse(result);
+    }
 }
