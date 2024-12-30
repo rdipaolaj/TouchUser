@@ -14,6 +14,11 @@ using user.secretsmanager.Service;
 using Microsoft.AspNetCore.Mvc;
 using user.request.Mapster;
 using user.application.Mapster;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using user.common.Responses;
+using System.Text.Json;
 
 namespace user.api;
 
@@ -50,6 +55,7 @@ public static class ProgramExtesions
     {
         builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection("RedisSettings"));
         builder.Services.Configure<SecretManagerSettings>(builder.Configuration.GetSection("SecretManagerSettings"));
+        builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
         return services;
     }
@@ -61,6 +67,7 @@ public static class ProgramExtesions
 
         PostgresDbSecrets secretsPostgres = secretManagerService.GetPostgresDbSecrets().GetAwaiter().GetResult();
         RedisSecrets redisSecrets = secretManagerService.GetRedisSecrets().GetAwaiter().GetResult();
+        JwtSecrets secretsAuth = secretManagerService.GetJwtSecrets().GetAwaiter().GetResult();
 
         services.Configure<PostgresDbSettings>(options =>
         {
@@ -74,6 +81,11 @@ public static class ProgramExtesions
         services.Configure<RedisKeySettings>(options =>
         {
             options.PrivateKey = redisSecrets.PrivateKey;
+        });
+
+        services.Configure<JwtSettings>(options =>
+        {
+            options.Secret = secretsAuth.JwtSigningKey;
         });
 
         return services;
@@ -151,6 +163,90 @@ public static class ProgramExtesions
         services.AddAntiforgery(options =>
         {
             options.HeaderName = "X-CSRF-TOKEN";
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection AddCustomJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        var serviceProvider = services.BuildServiceProvider();
+        var jwtSettings = serviceProvider.GetRequiredService<IOptions<JwtSettings>>().Value;
+
+        if (jwtSettings == null || string.IsNullOrEmpty(jwtSettings.Secret))
+        {
+            throw new InvalidOperationException("La configuración de JWT no está correctamente configurada en appsettings.json.");
+        }
+
+        var secretKey = Convert.FromBase64String(jwtSettings.Secret);
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings.Issuer,
+                ValidAudience = jwtSettings.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(secretKey),
+                ClockSkew = TimeSpan.Zero
+            };
+
+            options.Events = new JwtBearerEvents
+            {
+                OnChallenge = async context =>
+                {
+                    context.HandleResponse();
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.ContentType = "application/json";
+
+                    var response = new ApiResponse<object>
+                    {
+                        Success = false,
+                        StatusCode = 401,
+                        Message = "Falta el encabezado de autorización o el token no es válido.",
+                        Errors = new List<ErrorDetail>
+                        {
+                        new ErrorDetail
+                        {
+                            Code = "AUTH001",
+                            Description = "Token ausente o no válido en la solicitud."
+                        }
+                        }
+                    };
+
+                    await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                },
+                OnAuthenticationFailed = async context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.ContentType = "application/json";
+
+                    var response = new ApiResponse<object>
+                    {
+                        Success = false,
+                        StatusCode = 401,
+                        Message = "La autenticación falló.",
+                        Errors = new List<ErrorDetail>
+                        {
+                        new ErrorDetail
+                        {
+                            Code = "AUTH002",
+                            Description = context.Exception.Message
+                        }
+                        }
+                    };
+
+                    await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                }
+            };
         });
 
         return services;

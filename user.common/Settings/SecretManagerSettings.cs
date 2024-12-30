@@ -9,4 +9,5 @@ public class SecretManagerSettings
     public string AWSSecretKey { get; set; } = default!;
     public string ArnPostgresSecrets { get; set; } = string.Empty;
     public string ArnRedisSecrets { get; set; } = string.Empty;
+    public string ArnJwtSecrets { get; set; } = string.Empty;
 }

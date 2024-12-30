@@ -5,4 +5,5 @@ public interface ISecretManagerService
 {
     Task<PostgresDbSecrets?> GetPostgresDbSecrets();
     Task<RedisSecrets?> GetRedisSecrets();
+    Task<JwtSecrets?> GetJwtSecrets();
 }
