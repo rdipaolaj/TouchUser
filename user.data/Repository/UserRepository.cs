@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using user.common.Enums;
 using user.data.Repository.Interfaces;
 using user.entities;
 
@@ -49,6 +50,24 @@ public class UserRepository : IUserRepository
         {
             _logger.LogError($"Error en GetUserByUsernameAsync: {ex.Message}");
             return null;
+        }
+    }
+
+    public async Task<IEnumerable<string>> GetAdminEmailsAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogInformation("GetAdminEmailsAsync iniciado");
+            return await _context.Users
+                .AsNoTracking()
+                .Where(u => u.Role.userRole == UserRole.Administrator)
+                .Select(u => u.Email)
+                .ToListAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error en GetAdminEmailsAsync: {ex.Message}");
+            return new List<string>();
         }
     }
 }

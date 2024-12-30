@@ -32,4 +32,9 @@ internal class UserService : IUserService
     {
         return await _userRepository.GetUserByUsernameAsync(username, cancellationToken);
     }
+
+    public async Task<IEnumerable<string>> GetAdminEmailsAsync(CancellationToken cancellationToken)
+    {
+        return await _userRepository.GetAdminEmailsAsync(cancellationToken);
+    }
 }

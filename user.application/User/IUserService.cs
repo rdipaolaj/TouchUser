@@ -5,4 +5,5 @@ public interface IUserService
 {
     Task<user.entities.User?> CreateUserAsync(CreateUserCommand request, string salt, string hashedPassword, Guid roleId, CancellationToken cancellationToken);
     Task<entities.User?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken);
+    Task<IEnumerable<string>> GetAdminEmailsAsync(CancellationToken cancellationToken);
 }

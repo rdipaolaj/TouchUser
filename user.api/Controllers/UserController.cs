@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using user.api.Configuration;
 using user.request.Commands.v1;
+using user.request.Querys.v1.User;
 
 namespace user.api.Controllers;
 
@@ -37,6 +38,16 @@ public class UserController : CustomController
     {
         _logger.LogInformation("Getting user...");
         var result = await _mediator.Send(command);
+        return OkorBadRequestValidationApiResponse(result);
+    }
+
+    [HttpGet]
+    [Route("admin-emails")]
+    [MapToApiVersion(1)]
+    public async Task<IActionResult> GetAdminEmails()
+    {
+        _logger.LogInformation("Fetching admin emails...");
+        var result = await _mediator.Send(new ListAdminEmailsQuery());
         return OkorBadRequestValidationApiResponse(result);
     }
 }

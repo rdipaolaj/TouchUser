@@ -29,4 +29,14 @@ public class RoleController : CustomController
         var result = await _mediator.Send(new GetListRolesQuery());
         return OkorBadRequestValidationApiResponse(result);
     }
+
+    [HttpGet]
+    [MapToApiVersion(1)]
+    [Route("validate-role")]
+    public async Task<IActionResult> GetRoleById()
+    {
+        _logger.LogInformation("Getting roles...");
+        var result = await _mediator.Send(new GetListRolesQuery());
+        return OkorBadRequestValidationApiResponse(result);
+    }
 }

@@ -19,6 +19,7 @@ public static class MediatorModule
             configuration.RegisterServicesFromAssemblyContaining(typeof(CreateUserCommandHandler));
             configuration.RegisterServicesFromAssemblyContaining(typeof(GetListRolesQueryHandler));
             configuration.RegisterServicesFromAssemblyContaining(typeof(GetUserCommandHandler));
+            configuration.RegisterServicesFromAssemblyContaining(typeof(ListAdminEmailsQueryHandler));
 
             configuration.AddOpenBehavior(typeof(ValidatorBehavior<,>));
         });
